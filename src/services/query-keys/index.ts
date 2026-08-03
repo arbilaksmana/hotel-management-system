@@ -1,0 +1,16 @@
+export const qk = {
+  rooms: (hotelId: string) => ["rooms", hotelId] as const,
+  inventory: (hotelId: string, from: string, to: string) => ["inventory", hotelId, from, to] as const,
+  reservations: (hotelId: string) => ["reservations", hotelId] as const,
+  reservation: (id: string) => ["reservation", id] as const,
+  payments: (hotelId: string, reservationId: string) => ["payments", hotelId, reservationId] as const,
+  pendingPayments: (hotelId: string) => ["pending-payments", hotelId] as const,
+  approvals: (hotelId: string) => ["approvals", hotelId] as const,
+  cards: (hotelId: string) => ["cards", hotelId] as const,
+  doorEvents: (hotelId: string) => ["door-events", hotelId] as const,
+  housekeeping: (hotelId: string) => ["housekeeping", hotelId] as const,
+  maintenance: (hotelId: string) => ["maintenance", hotelId] as const,
+  audit: (hotelId: string) => ["audit", hotelId] as const,
+  notifications: (hotelId: string, userId: string) => ["notifications", hotelId, userId] as const,
+  dashboard: (hotelId: string, date: string) => ["dashboard", hotelId, date] as const,
+};

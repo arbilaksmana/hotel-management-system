@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 25% 97%;
+    --foreground: 224 30% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 30% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 30% 12%;
+    --primary: 221 56% 32%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 220 16% 92%;
+    --secondary-foreground: 224 30% 18%;
+    --muted: 220 16% 93%;
+    --muted-foreground: 220 12% 42%;
+    --accent: 214 60% 94%;
+    --accent-foreground: 221 56% 30%;
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 18% 88%;
+    --input: 220 18% 86%;
+    --ring: 221 56% 40%;
+    --radius: 0.65rem;
+
+    /* Status tones. Each tone carries a badge surface (bg/fg/border) and a
+       denser `cell` surface used by the availability rack. Statuses map to
+       tones in src/components/shared/status-tokens.ts — never hardcode
+       palette colors in components. */
+    --tone-positive-bg: 152 60% 94%;
+    --tone-positive-fg: 152 62% 24%;
+    --tone-positive-border: 152 45% 82%;
+    --tone-positive-cell: 152 55% 87%;
+
+    --tone-info-bg: 214 90% 94%;
+    --tone-info-fg: 217 70% 32%;
+    --tone-info-border: 214 70% 82%;
+    --tone-info-cell: 214 85% 85%;
+
+    --tone-warning-bg: 45 95% 92%;
+    --tone-warning-fg: 32 80% 28%;
+    --tone-warning-border: 45 80% 78%;
+    --tone-warning-cell: 45 92% 83%;
+
+    --tone-committed-bg: 350 90% 95%;
+    --tone-committed-fg: 348 70% 34%;
+    --tone-committed-border: 350 75% 86%;
+    --tone-committed-cell: 350 82% 88%;
+
+    --tone-danger-bg: 0 90% 95%;
+    --tone-danger-fg: 0 70% 38%;
+    --tone-danger-border: 0 75% 86%;
+    --tone-danger-cell: 0 82% 89%;
+
+    --tone-special-bg: 265 85% 95%;
+    --tone-special-fg: 265 55% 40%;
+    --tone-special-border: 265 70% 87%;
+    --tone-special-cell: 265 78% 90%;
+
+    --tone-inspect-bg: 175 60% 93%;
+    --tone-inspect-fg: 178 60% 24%;
+    --tone-inspect-border: 175 45% 80%;
+    --tone-inspect-cell: 175 55% 86%;
+
+    --tone-attention-bg: 28 95% 93%;
+    --tone-attention-fg: 24 80% 32%;
+    --tone-attention-border: 28 80% 80%;
+    --tone-attention-cell: 28 90% 85%;
+
+    --tone-neutral-bg: 220 16% 94%;
+    --tone-neutral-fg: 220 15% 34%;
+    --tone-neutral-border: 220 16% 86%;
+    --tone-neutral-cell: 220 16% 91%;
+
+    --tone-inverse-bg: 222 40% 22%;
+    --tone-inverse-fg: 210 30% 95%;
+    --tone-inverse-border: 222 35% 32%;
+    --tone-inverse-cell: 222 40% 26%;
+  }
+
+  .dark {
+    --background: 224 32% 8%;
+    --foreground: 210 30% 94%;
+    --card: 224 30% 11%;
+    --card-foreground: 210 30% 94%;
+    --popover: 224 30% 11%;
+    --popover-foreground: 210 30% 94%;
+    --primary: 214 80% 62%;
+    --primary-foreground: 224 40% 10%;
+    --secondary: 222 22% 18%;
+    --secondary-foreground: 210 30% 92%;
+    --muted: 222 20% 17%;
+    --muted-foreground: 218 14% 65%;
+    --accent: 222 30% 20%;
+    --accent-foreground: 214 80% 78%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 222 20% 20%;
+    --input: 222 20% 24%;
+    --ring: 214 80% 58%;
+
+    --tone-positive-bg: 152 45% 15%;
+    --tone-positive-fg: 152 60% 72%;
+    --tone-positive-border: 152 35% 26%;
+    --tone-positive-cell: 152 42% 22%;
+
+    --tone-info-bg: 215 55% 17%;
+    --tone-info-fg: 214 85% 76%;
+    --tone-info-border: 215 40% 30%;
+    --tone-info-cell: 215 52% 25%;
+
+    --tone-warning-bg: 38 55% 15%;
+    --tone-warning-fg: 45 90% 70%;
+    --tone-warning-border: 38 40% 28%;
+    --tone-warning-cell: 38 52% 23%;
+
+    --tone-committed-bg: 348 45% 17%;
+    --tone-committed-fg: 350 85% 78%;
+    --tone-committed-border: 348 35% 30%;
+    --tone-committed-cell: 348 44% 25%;
+
+    --tone-danger-bg: 0 48% 17%;
+    --tone-danger-fg: 0 85% 76%;
+    --tone-danger-border: 0 38% 30%;
+    --tone-danger-cell: 0 46% 25%;
+
+    --tone-special-bg: 265 45% 20%;
+    --tone-special-fg: 265 80% 80%;
+    --tone-special-border: 265 35% 33%;
+    --tone-special-cell: 265 44% 27%;
+
+    --tone-inspect-bg: 178 45% 14%;
+    --tone-inspect-fg: 175 60% 70%;
+    --tone-inspect-border: 178 35% 25%;
+    --tone-inspect-cell: 178 42% 21%;
+
+    --tone-attention-bg: 26 55% 16%;
+    --tone-attention-fg: 28 90% 70%;
+    --tone-attention-border: 26 40% 28%;
+    --tone-attention-cell: 26 52% 24%;
+
+    --tone-neutral-bg: 222 18% 18%;
+    --tone-neutral-fg: 218 14% 72%;
+    --tone-neutral-border: 222 16% 28%;
+    --tone-neutral-cell: 222 18% 23%;
+
+    --tone-inverse-bg: 220 14% 82%;
+    --tone-inverse-fg: 224 40% 12%;
+    --tone-inverse-border: 220 14% 70%;
+    --tone-inverse-cell: 220 14% 76%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
