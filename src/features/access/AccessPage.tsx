@@ -7,7 +7,6 @@ import { useToast } from "@/components/feedback/Toast";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label, Select } from "@/components/ui/input";
 import { rooms } from "@/data/seed";
 import { formatDateTime } from "@/lib/format";
@@ -43,44 +42,54 @@ export function AccessPage() {
       <PageHeader title="Kartu & Monitor Akses" subtitle="Manajemen kartu, event door lock (simulator), dan rekonsiliasi anomaly." />
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader><CardTitle>Event Door Lock</CardTitle></CardHeader>
-          <CardContent className="space-y-2">
-            {events.map((e) => (
-              <div key={e.id} className={cn("flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2", e.anomaly && "border-red-300 bg-red-50")}>
-                <div>
-                  <p className="text-sm font-medium">Kamar {e.roomNumber} · kartu {e.cardUid}</p>
-                  <p className="text-xs text-muted-foreground">{formatDateTime(e.eventTime)} · {e.deviceId} · {e.note}</p>
+        <div className="rounded-lg border bg-card lg:col-span-2">
+          <div className="flex items-center justify-between border-b px-4 py-3">
+            <h2 className="text-sm font-semibold tracking-tight">Event Door Lock</h2>
+            <span className="text-xs text-muted-foreground tabular-nums">{events.length} event</span>
+          </div>
+          <div className="space-y-1 p-3">
+            {events.length === 0 ? (
+              <p className="px-2 py-6 text-center text-xs text-muted-foreground">Belum ada event.</p>
+            ) : events.map((e) => (
+              <div key={e.id} className={cn("flex flex-wrap items-center justify-between gap-2 rounded-md border bg-background px-3 py-2.5 transition-colors hover:bg-accent/30", e.anomaly && "border-destructive/50 bg-destructive/5")}>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium tabular-nums">Kamar {e.roomNumber} · kartu {e.cardUid}</p>
+                  <p className="text-xs text-muted-foreground tabular-nums">{formatDateTime(e.eventTime)} · {e.deviceId} · {e.note}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center gap-2">
                   <StatusBadge status={e.eventType} />
                   {e.anomaly ? <span className="rounded-sm bg-destructive px-2 py-0.5 text-[11px] font-semibold text-destructive-foreground">ANOMALY</span> : null}
                 </div>
               </div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         <div className="space-y-4">
-          <Card>
-            <CardHeader><CardTitle>Daftar Kartu</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
-              {cards.length === 0 ? <p className="text-sm text-muted-foreground">Belum ada kartu.</p> : cards.map((c) => (
-                <div key={c.id} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+          <div className="rounded-lg border bg-card">
+            <div className="flex items-center justify-between border-b px-4 py-3">
+              <h2 className="text-sm font-semibold tracking-tight">Daftar Kartu</h2>
+              <span className="text-xs text-muted-foreground tabular-nums">{cards.length} kartu</span>
+            </div>
+            <div className="space-y-1 p-3">
+              {cards.length === 0 ? <p className="px-2 py-6 text-center text-xs text-muted-foreground">Belum ada kartu.</p> : cards.map((c) => (
+                <div key={c.id} className="flex items-center justify-between rounded-md border bg-background px-3 py-2 text-sm transition-colors hover:bg-accent/30">
                   <div>
-                    <p className="font-mono text-xs">{c.cardUid}</p>
-                    <p className="text-xs text-muted-foreground">Kamar {c.roomNumber}</p>
+                    <p className="font-mono text-xs tabular-nums">{c.cardUid}</p>
+                    <p className="text-xs text-muted-foreground tabular-nums">Kamar {c.roomNumber}</p>
                   </div>
                   <StatusBadge status={c.status} />
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {can("doorevent:simulate") ? (
-            <Card>
-              <CardHeader><CardTitle>Simulator Door Event</CardTitle></CardHeader>
-              <CardContent className="space-y-3">
+            <div className="rounded-lg border bg-card">
+              <div className="border-b px-4 py-3">
+                <h2 className="text-sm font-semibold tracking-tight">Simulator Door Event</h2>
+              </div>
+              <div className="space-y-3 p-4">
                 <div>
                   <Label>Card UID</Label>
                   <Select value={cardUid} onChange={(e) => setCardUid(e.target.value)}>
@@ -94,26 +103,28 @@ export function AccessPage() {
                     {rooms.filter((r) => r.active).map((r) => <option key={r.id} value={r.id}>{r.number}</option>)}
                   </Select>
                 </div>
-                <Button className="w-full" onClick={() => simulate.mutate()} disabled={simulate.isPending}>
+                <Button type="button" className="w-full" onClick={() => simulate.mutate()} disabled={simulate.isPending}>
                   {simulate.isPending ? "Memproses…" : "Kirim Door Event"}
                 </Button>
                 <p className="text-xs text-muted-foreground">Event tanpa reservasi valid membuat ACCESS ANOMALY dan memblokir kamar sementara (BR-07/FR-082).</p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ) : null}
 
           {events.some((e) => e.anomaly) && can("anomaly:resolve") ? (
-            <Card>
-              <CardHeader><CardTitle>Rekonsiliasi</CardTitle></CardHeader>
-              <CardContent className="space-y-2">
+            <div className="rounded-lg border border-destructive/40 bg-card">
+              <div className="border-b border-destructive/30 px-4 py-3">
+                <h2 className="text-sm font-semibold tracking-tight text-destructive">Rekonsiliasi</h2>
+              </div>
+              <div className="space-y-2 p-4">
                 <Input placeholder="Catatan penyelesaian…" value={anomalyNote} onChange={(e) => setAnomalyNote(e.target.value)} />
                 {events.filter((e) => e.anomaly).map((e) => (
-                  <Button key={e.id} size="sm" variant="outline" onClick={() => resolve.mutate({ id: e.id, note: anomalyNote || "Ditangani supervisor" })}>
-                    Selesaikan anomaly {e.roomNumber}
+                  <Button type="button" key={e.id} size="sm" variant="outline" className="w-full" onClick={() => resolve.mutate({ id: e.id, note: anomalyNote || "Ditangani supervisor" })}>
+                    Selesaikan anomaly kamar {e.roomNumber}
                   </Button>
                 ))}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ) : null}
         </div>
       </div>

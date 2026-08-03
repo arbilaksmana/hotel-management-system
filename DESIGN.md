@@ -1,76 +1,79 @@
-# Design System — Hotel Management System (Front Office Prototype)
+# Design System - Hotel Management System
 
-DESIGN.md ini adalah kontrak visual untuk seluruh komponen prototype. Desktop-first untuk front office, responsif untuk tablet/mobile.
+Kontrak visual untuk prototype operasional hotel. Desktop-first, tetapi seluruh alur inti harus tetap dapat digunakan pada tablet dan mobile.
 
-## Prinsip
+## 1. Direction
 
-- Profesional, padat informasi, tenang — tools operasional hotel, bukan landing page.
-- Kejelasan status di atas dekorasi: setiap state bisnis punya warna + label teks, tidak hanya warna (PRD 10.1).
-- Hierarki data: grid availability dan tabel adalah pusat; dekorasi minimal.
-- Status wajib memakai token semantik (`src/components/shared/status-tokens.ts`), bukan palette mentah — agar light/dark theme sinkron dan semantik status bisa direview di satu tempat.
+**Quiet control room.** Antarmuka terasa seperti meja kerja front office yang tenang: rail navigasi berwarna tinta, kanvas netral hangat, garis pemisah tipis, dan status sebagai satu-satunya sumber warna kuat. Pengguna harus dapat mengenali pekerjaan berikutnya dalam beberapa detik tanpa membaca seluruh halaman.
 
-## Token
+Referensi pola operasional: detail dan aksi tetap kontekstual seperti reservation workspace PMS modern; tidak menyalin merek, aset, atau copy produk lain. Riset eksternal tambahan tidak tersedia karena task riset gagal pada konfigurasi model.
 
-- Font: Inter (sans). Angka tabular untuk nominal rupiah/status: `tabular-nums`.
-- Radius: `--radius: 0.65rem`; kartu besar `rounded-lg`, kontrol `rounded-md`, chip `rounded-sm`.
-- Warna semantik (shadcn): background netral sejuk, primary navy `#274690`-ish (hsl 221 56% 32%).
-- Spacing: skala Tailwind; padding section `p-6`, kartu `p-4`, gutter grid `gap-3`.
-- Dark mode: `darkMode: ["class"]`; token didefinisikan sebagai CSS variables di `:root` dan override `.dark` di `src/index.css`. Komponen tidak boleh hardcode warna — hanya konsumsi variabel via `hsl(var(--...))`.
+## 2. Users And Tasks
 
-## Status & Warna (PRD Lampiran A + 9.x)
+- Resepsionis: mencari kamar, membuat reservasi, check-in/out, dan menangani antrean sambil melayani tamu.
+- Supervisor: memindai exception, approval, pembayaran tertunda, dan status lintas departemen.
+- Housekeeping/engineering: menemukan pekerjaan berikutnya dengan cepat pada perangkat tablet.
+- Pengguna low-vision, keyboard, atau situasional: tetap mendapat label teks, fokus terlihat, target sentuh memadai, dan hierarki yang tidak bergantung warna.
 
-Token chip status lewat `StatusBadge` — selalu label teks + latar berwarna lembut + border tone.
+## 3. Tokens
 
-Sistem tone semantik (10 tone, didefinisikan di `status-tokens.ts`):
+- Font: sans-serif sistem yang cepat dan netral; angka operasional selalu `tabular-nums`.
+- Type: page title `text-2xl`; section title `text-sm font-semibold`; body/control `text-sm`; metadata `text-xs`; micro label `text-[11px]`.
+- Radius: container `rounded-lg`; control `rounded-md`; status `rounded-sm`. Hindari pill dan radius besar.
+- Spacing: unit dasar 4px. Shell `p-4` mobile / `p-6` desktop; section `gap-4`; dense row `py-2.5`; control height 40px.
+- Canvas: `background` sebagai off-white sejuk; `card` sebagai work surface; `foreground` sebagai tinta navy gelap; `primary` sebagai navy; `accent` sebagai selected surface.
+- Depth: border dan tonal shift adalah default. Shadow hanya untuk overlay/popover yang benar-benar berada di atas konten.
+- Dark mode tetap berbasis class dan seluruh warna berasal dari CSS variables di `src/index.css`.
 
-| Tone | Intent | Status utama |
+## 4. Status
+
+Status wajib memakai `src/components/shared/status-tokens.ts`, selalu disertai label teks, dan tidak boleh diganti dengan raw palette.
+
+| Tone | Intent | Contoh |
 |---|---|---|
-| `positive` | sellable / clean / settled | AVAILABLE, CLEAN, VERIFIED, APPROVED, ACTIVE, RESOLVED |
-| `info` | guest in house | OCCUPIED, CHECKED_IN |
-| `warning` | time-boxed / awaiting action | HELD, HOLD, CLEANING, PENDING_PAYMENT, PARTIALLY_PAID, PENDING, REVISION_REQUESTED, IN_PROGRESS, REPLACED |
-| `committed` | sold, guest belum tiba | BOOKED, CONFIRMED, OPEN |
-| `danger` | failure / rejection / anomaly | REJECTED, FAILED |
-| `special` | approval + reversal flow | PENDING_APPROVAL, REFUNDED, REVERSED |
-| `inspect` | verified by supervisor | INSPECTED |
-| `attention` | perlu kerja housekeeping | DIRTY |
-| `neutral` | terminal / inert | DRAFT, CHECKED_OUT, CANCELLED, NO_SHOW, EXPIRED, MAINTENANCE, INVALIDATED, DEACTIVATED, CLOSED |
-| `inverse` | hard block, keluar inventory | BLOCKED, OUT_OF_ORDER |
+| `positive` | siap dijual / selesai | AVAILABLE, CLEAN, APPROVED |
+| `info` | tamu sedang menginap | OCCUPIED, CHECKED_IN |
+| `warning` | menunggu tindakan | HELD, CLEANING, PENDING_PAYMENT |
+| `committed` | sudah terjual | BOOKED, CONFIRMED |
+| `danger` | gagal / anomaly | REJECTED, FAILED |
+| `special` | approval / reversal | PENDING_APPROVAL, REFUNDED |
+| `inspect` | diverifikasi supervisor | INSPECTED |
+| `attention` | perlu dikerjakan | DIRTY |
+| `neutral` | terminal / inert | DRAFT, CHECKED_OUT, CANCELLED |
+| `inverse` | hard block | BLOCKED, OUT_OF_ORDER |
 
-Mapping status → tone ada di `STATUS_TONE`; helper:
+Availability memakai `cellToneClass(status)` untuk permukaan rack yang padat. Anomaly akses memakai border danger dan ikon, bukan tone baru.
 
-- `toneFor(status)` → StatusTone (fallback `neutral` untuk status tak dikenal).
-- `badgeToneClass(status)` → kelas badge (bg lembut + fg + border) untuk `StatusBadge`.
-- `cellToneClass(status)` → kelas sel densitas tinggi untuk grid availability.
-- `TONE_TEXT[tone]` → fg-only untuk emphasis metrik di kartu.
+## 5. Primitives
 
-Setiap tone punya 4 varian di Tailwind (`tailwind.config.ts` → `colors.tone.*`): `bg`, `foreground`, `border`, `cell`. CSS variables per tone di `src/index.css` (light + dark).
+- `AppLayout`: ink rail desktop, top command bar, drawer navigation mobile, dan content canvas dengan lebar terkontrol.
+- `PageHeader`: eyebrow opsional, judul, subtitle maksimal sekitar 65 karakter, dan action rail yang dapat wrap.
+- `Card`: work surface datar dengan border; elevated hanya untuk overlay.
+- `Button`: default, secondary, outline, destructive, ghost; hover tonal, pressed `translate-y-px`, fokus ring jelas.
+- `Input`, `Select`, `Textarea`: tinggi 40px, border tenang, fokus ring, disabled jelas.
+- `StatusBadge`: label + semantic tone.
+- `Operational metric`: label kecil, angka tabular, dan konteks singkat; bukan kumpulan kartu identik tanpa prioritas.
+- `Data surface`: table/rack dengan sticky header, sticky identity column, row hover, dan horizontal scroll yang terlihat.
+- `EmptyState`, `ConfirmDialog`, `MoneyText`: pola bersama untuk state dan transaksi.
 
-### Grid availability
+Required states: default, hover, focus-visible, active, disabled, loading, empty, error. Mobile drawer harus dapat ditutup dengan tombol yang berlabel dan setelah memilih tujuan.
 
-- Sel grid memakai `cellToneClass(status)` — densitas tinggi, edge-to-edge.
-- Sticky kolom kiri (kamar) + sticky header (tanggal), sel klik-able.
-- Anomaly akses: border merah + ikon alert (bukan tone semantik).
+## 6. Layout
 
-## Pola Komponen
+- Desktop: rail 240px, top bar 56px, content maksimal 1600px. Dashboard memakai satu metric utama dan kelompok exception, bukan grid kartu seragam.
+- Tablet: rail menjadi drawer; content tetap padat dengan grid 2 kolom bila cukup ruang.
+- Mobile: satu kolom, header action wrap penuh, kontrol filter selebar container, tabel/rack horizontal-scroll. Tidak ada content tertutup navigasi.
+- Tabel dan availability menjadi pusat visual. Form memakai section sederhana, bukan setiap field dalam kartu terpisah.
 
-- `AppLayout`: sidebar kiri navigasi + header (hotel switcher, user, notifikasi).
-- `PageHeader`: judul + aksi utama kanan.
-- `StatusBadge`, `MoneyText`, `EmptyState`, `ConfirmDialog`, `DataTable` ringan.
-- Availability: grid sticky kolom kiri (kamar) + sticky header (tanggal), sel klik-able.
-- Form: React Hook Form + Zod; error inline Bahasa Indonesia.
+## 7. Motion
 
-## Motion
+- 150-220ms untuk hover, drawer, dialog, dan popover; hanya `transform`, `opacity`, atau warna.
+- Motion selalu menjelaskan state. Hormati `prefers-reduced-motion`.
+- Hold countdown boleh memakai `animate-pulse-soft`; elemen non-interaktif tidak dianimasikan.
 
-- Fade/slide halus 200ms untuk dialog/popover. Tidak ada animasi besar.
-- Hold countdown berdenyut halus (`animate-pulse-soft`).
+## 8. Accessibility And Debt
 
-## Aksesibilitas
-
-- Kontras AA, label teks menyertai warna, fokus terlihat (`ring`), target sentuh >= 40px.
-- Status tidak pernah disampaikan hanya lewat warna — selalu ada label teks (PRD 10.1).
-
-## Teks
-
-- Bahasa Indonesia untuk seluruh UI.
-- Separator metadata memakai `·` (middle dot); loading/pending memakai ellipsis `…`; range angka memakai en dash `–`.
-- Hindari karakter replacement `U+FFFD` (mojibake) — verifikasi dengan scan codepoint sebelum commit.
+- Target sentuh minimal 40px, fokus keyboard terlihat, status tidak pernah color-only, landmark semantik tersedia, dan tombol selalu memiliki `type` eksplisit.
+- Kontras teks normal minimal AA. Navigation drawer memiliki nama aksesibel dan overlay tidak boleh memerangkap pengguna.
+- Bahasa UI Indonesia. Metadata memakai `·`, pending memakai `…`, dan range memakai `–`.
+- Accepted debt sementara: custom dialog lama belum memiliki native focus trap; harus ditangani terpisah karena memengaruhi primitive dan seluruh call site.

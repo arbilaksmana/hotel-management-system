@@ -10,7 +10,6 @@ import { useToast } from "@/components/feedback/Toast";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { MoneyText } from "@/components/shared/MoneyText";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { guests, ratePlans, rooms, roomTypes } from "@/data/seed";
 import { addDays, format } from "date-fns";
@@ -96,8 +95,11 @@ export function ReservationNewPage() {
       <PageHeader title="Buat Reservasi" subtitle="Isi data, pilih rate plan & kamar, sistem menahan kamar sebagai HOLD." />
       <form onSubmit={handleSubmit((v) => create.mutate(v))}>
         <div className="grid gap-4 lg:grid-cols-3">
-          <Card className="lg:col-span-2">
-            <CardContent className="space-y-4 p-4">
+          <div className="rounded-lg border bg-card lg:col-span-2">
+            <div className="border-b px-4 py-3">
+              <h2 className="text-sm font-semibold tracking-tight">Data reservasi</h2>
+            </div>
+            <div className="space-y-4 p-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <Label htmlFor="guestId">Tamu</Label>
@@ -159,8 +161,8 @@ export function ReservationNewPage() {
                         key={room.id}
                         onClick={() => toggleRoom(room.id)}
                         className={
-                          "rounded-md border px-3 py-2 text-sm " +
-                          (selectedRooms.includes(room.id) ? "border-primary bg-accent font-medium" : "hover:bg-accent")
+                          "rounded-md border px-3 py-2 text-sm tabular-nums transition-colors " +
+                          (selectedRooms.includes(room.id) ? "border-primary bg-accent font-medium" : "hover:bg-accent/50")
                         }
                       >
                         {room.number}
@@ -175,24 +177,26 @@ export function ReservationNewPage() {
                 <Label htmlFor="notes">Catatan / alasan diskon</Label>
                 <Textarea id="notes" placeholder="Contoh: kontrak corporate, kompensasi komplain…" {...register("notes")} />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="space-y-3 p-4">
-              <h3 className="text-sm font-semibold">Ringkasan</h3>
+          <div className="rounded-lg border bg-card">
+            <div className="border-b px-4 py-3">
+              <h2 className="text-sm font-semibold tracking-tight">Ringkasan</h2>
+            </div>
+            <div className="space-y-3 p-4">
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">Malam</span><span className="tabular-nums">{nights}</span></div>
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">Kamar</span><span className="tabular-nums">{selectedRooms.length}</span></div>
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">Harga/malam</span><MoneyText value={plan?.pricePerNight ?? 0} /></div>
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><MoneyText value={baseTotal} /></div>
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">Diskon</span><span className="tabular-nums">{Math.round(discountPercent * 100)}%</span></div>
               <div className="flex justify-between border-t pt-2 text-base font-semibold"><span>Total</span><MoneyText value={total} /></div>
-              <Button className="w-full" disabled={selectedRooms.length === 0 || !plan || create.isPending}>
+              <Button type="submit" className="w-full" disabled={selectedRooms.length === 0 || !plan || create.isPending}>
                 {create.isPending ? "Memproses…" : "Buat & Tahan Kamar (HOLD)"}
               </Button>
               <p className="text-xs text-muted-foreground">Diskon di atas batas peran Anda akan mengirim permintaan approval.</p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </form>
     </div>

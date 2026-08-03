@@ -10,7 +10,6 @@ import { StatusBadge } from "@/components/shared/StatusBadge";
 import { MoneyText } from "@/components/shared/MoneyText";
 import { ConfirmDialog } from "@/components/feedback/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label, Select } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
 import { policy, guests } from "@/data/seed";
@@ -102,73 +101,79 @@ export function ReservationDetailPage() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
-          <Card>
-            <CardHeader><CardTitle>Rincian</CardTitle></CardHeader>
-            <CardContent className="grid gap-2 text-sm sm:grid-cols-2">
-              <div><p className="text-muted-foreground">Periode</p><p>{res.checkInDate} ? {res.checkOutDate} ({res.nights} malam)</p></div>
-              <div><p className="text-muted-foreground">Tamu</p><p>{res.guestName} {guest?.idNumber ? `(ID ${guest.idNumber})` : "(identitas belum lengkap)"}</p></div>
-              <div><p className="text-muted-foreground">Subtotal</p><MoneyText value={res.baseRateTotal} /></div>
-              <div><p className="text-muted-foreground">Diskon</p><p className="tabular-nums">{Math.round(res.discountPercent * 100)}%</p></div>
-              <div><p className="text-muted-foreground">Total</p><MoneyText value={res.totalAmount} className="text-base font-semibold" /></div>
-              <div><p className="text-muted-foreground">DP minimum</p><MoneyText value={Math.min(threshold, res.totalAmount)} /></div>
-              <div><p className="text-muted-foreground">Terbayar</p><MoneyText value={res.paidAmount} className="text-emerald-700" /></div>
+          <div className="rounded-lg border bg-card">
+            <div className="border-b px-4 py-3">
+              <h2 className="text-sm font-semibold tracking-tight">Rincian</h2>
+            </div>
+            <div className="grid gap-3 p-4 text-sm sm:grid-cols-2">
+              <div><p className="text-xs text-muted-foreground">Periode</p><p className="tabular-nums">{res.checkInDate} – {res.checkOutDate} ({res.nights} malam)</p></div>
+              <div><p className="text-xs text-muted-foreground">Tamu</p><p>{res.guestName} {guest?.idNumber ? `(ID ${guest.idNumber})` : "(identitas belum lengkap)"}</p></div>
+              <div><p className="text-xs text-muted-foreground">Subtotal</p><MoneyText value={res.baseRateTotal} /></div>
+              <div><p className="text-xs text-muted-foreground">Diskon</p><p className="tabular-nums">{Math.round(res.discountPercent * 100)}%</p></div>
+              <div><p className="text-xs text-muted-foreground">Total</p><MoneyText value={res.totalAmount} className="text-base font-semibold" /></div>
+              <div><p className="text-xs text-muted-foreground">DP minimum</p><MoneyText value={Math.min(threshold, res.totalAmount)} /></div>
+              <div><p className="text-xs text-muted-foreground">Terbayar</p><MoneyText value={res.paidAmount} className="text-emerald-700" /></div>
               {res.holdExpiresAt && ["HOLD", "PENDING_PAYMENT", "PENDING_APPROVAL", "EXPIRED"].includes(res.status) ? (
-                <div><p className="text-muted-foreground">Sisa HOLD</p><p className="animate-pulse-soft font-medium text-amber-700">{holdLeft}</p></div>
+                <div><p className="text-xs text-muted-foreground">Sisa HOLD</p><p className="animate-pulse-soft font-medium text-amber-700 tabular-nums">{holdLeft}</p></div>
               ) : null}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Pembayaran</CardTitle>
-              {can("payment:record") ? <Button size="sm" onClick={() => { setMethod("TRANSFER"); setAmount(""); setReference(""); setPayOpen(true); }}>Catat Pembayaran</Button> : null}
-            </CardHeader>
-            <CardContent>
+          <div className="rounded-lg border bg-card">
+            <div className="flex items-center justify-between border-b px-4 py-3">
+              <h2 className="text-sm font-semibold tracking-tight">Pembayaran</h2>
+              {can("payment:record") ? <Button type="button" size="sm" onClick={() => { setMethod("TRANSFER"); setAmount(""); setReference(""); setPayOpen(true); }}>Catat Pembayaran</Button> : null}
+            </div>
+            <div className="p-4">
               {payments.length === 0 ? <p className="text-sm text-muted-foreground">Belum ada pembayaran.</p> : (
-                <table className="w-full text-sm">
-                  <thead className="text-left text-xs text-muted-foreground">
-                    <tr><th className="py-1">Metode</th><th className="text-right">Jumlah</th><th>Status</th><th>Waktu</th><th></th></tr>
-                  </thead>
-                  <tbody>
-                    {payments.map((p) => (
-                      <tr key={p.id} className="border-t">
-                        <td className="py-2">{p.method} {p.isDeposit ? "(DP)" : ""}</td>
-                        <td className="text-right"><MoneyText value={p.amount} /></td>
-                        <td><StatusBadge status={p.status} /></td>
-                        <td className="text-muted-foreground">{formatDateTime(p.createdAt)}</td>
-                        <td className="text-right">
-                          {p.status === "PENDING" && can("payment:verify") ? (
-                            <Button size="sm" variant="outline" onClick={() => verify.mutate(p.id)}>Verifikasi</Button>
-                          ) : null}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="text-left text-xs text-muted-foreground">
+                      <tr><th className="py-1.5 font-medium">Metode</th><th className="text-right font-medium">Jumlah</th><th className="font-medium">Status</th><th className="font-medium">Waktu</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                      {payments.map((p) => (
+                        <tr key={p.id} className="border-t">
+                          <td className="py-2.5">{p.method} {p.isDeposit ? "(DP)" : ""}</td>
+                          <td className="text-right"><MoneyText value={p.amount} /></td>
+                          <td><StatusBadge status={p.status} /></td>
+                          <td className="text-muted-foreground tabular-nums">{formatDateTime(p.createdAt)}</td>
+                          <td className="text-right">
+                            {p.status === "PENDING" && can("payment:verify") ? (
+                              <Button type="button" size="sm" variant="outline" onClick={() => verify.mutate(p.id)}>Verifikasi</Button>
+                            ) : null}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
-              <p className="mt-2 text-xs text-muted-foreground">Upload bukti transfer tidak sama dengan verifikasi; hanya pembayaran VERIFIED yang mengunci kamar (BR-02/BR-03).</p>
-            </CardContent>
-          </Card>
+              <p className="mt-3 text-xs text-muted-foreground">Upload bukti transfer tidak sama dengan verifikasi; hanya pembayaran VERIFIED yang mengunci kamar (BR-02/BR-03).</p>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-3">
-          <Card>
-            <CardHeader><CardTitle>Aksi</CardTitle></CardHeader>
-            <CardContent className="flex flex-col gap-2">
+          <div className="rounded-lg border bg-card">
+            <div className="border-b px-4 py-3">
+              <h2 className="text-sm font-semibold tracking-tight">Aksi</h2>
+            </div>
+            <div className="flex flex-col gap-2 p-4">
               {["HOLD", "PENDING_PAYMENT", "EXPIRED"].includes(res.status) && can("hold:extend") ? (
-                <Button variant="outline" onClick={() => extendHold.mutate()} disabled={extendHold.isPending}>Perpanjang HOLD 2 jam</Button>
+                <Button type="button" variant="outline" onClick={() => extendHold.mutate()} disabled={extendHold.isPending}>Perpanjang HOLD 2 jam</Button>
               ) : null}
               {["CONFIRMED", "PARTIALLY_PAID"].includes(res.status) && can("checkin:perform") ? (
-                <Button onClick={() => setCheckinOpen(true)}>Check-in</Button>
+                <Button type="button" onClick={() => setCheckinOpen(true)}>Check-in</Button>
               ) : null}
               {res.status === "CHECKED_IN" && can("checkout:perform") ? (
-                <Button variant="outline" onClick={() => checkOut.mutate()} disabled={checkOut.isPending}>Checkout</Button>
+                <Button type="button" variant="outline" onClick={() => checkOut.mutate()} disabled={checkOut.isPending}>Checkout</Button>
               ) : null}
               {!["CANCELLED", "CHECKED_OUT", "REJECTED"].includes(res.status) && can("reservation:cancel") ? (
-                <Button variant="destructive" onClick={() => setCancelOpen(true)}>Batalkan Reservasi</Button>
+                <Button type="button" variant="destructive" onClick={() => setCancelOpen(true)}>Batalkan Reservasi</Button>
               ) : null}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -178,8 +183,8 @@ export function ReservationDetailPage() {
         title="Catat Pembayaran"
         footer={
           <>
-            <Button variant="outline" onClick={() => setPayOpen(false)}>Batal</Button>
-            <Button onClick={() => record.mutate()} disabled={!amount || record.isPending}>Simpan</Button>
+            <Button type="button" variant="outline" onClick={() => setPayOpen(false)}>Batal</Button>
+            <Button type="button" onClick={() => record.mutate()} disabled={!amount || record.isPending}>Simpan</Button>
           </>
         }
       >
