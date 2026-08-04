@@ -17,7 +17,7 @@ Referensi pola operasional: detail dan aksi tetap kontekstual seperti reservatio
 
 ## 3. Tokens
 
-- Font: sans-serif sistem yang cepat dan netral; angka operasional selalu `tabular-nums`.
+- Font: Inter (Google Fonts di `index.html`, diterapkan pada `body` di `index.css`); angka operasional selalu `tabular-nums`.
 - Type: page title `text-2xl`; section title `text-sm font-semibold`; body/control `text-sm`; metadata `text-xs`; micro label `text-[11px]`.
 - Radius: container `rounded-lg`; control `rounded-md`; status `rounded-sm`. Hindari pill dan radius besar.
 - Spacing: unit dasar 4px. Shell `p-4` mobile / `p-6` desktop; section `gap-4`; dense row `py-2.5`; control height 40px.
@@ -61,6 +61,9 @@ Required states: default, hover, focus-visible, active, disabled, loading, empty
 ## 6. Layout
 
 - Desktop: rail 240px, top bar 56px, content maksimal 1600px. Dashboard memakai satu metric utama dan kelompok exception, bukan grid kartu seragam.
+- Exception-first: counter di dashboard dapat diklik dan mengarah ke antrean kerja (work queue) yang relevan.
+- Availability rack: di bawah header tanggal, tampilkan micro-metric persen okupansi.
+- Front desk hari ini: antrean kedatangan / keberangkatan / in-house dengan strip konteks shift di atas.
 - Tablet: rail menjadi drawer; content tetap padat dengan grid 2 kolom bila cukup ruang.
 - Mobile: satu kolom, header action wrap penuh, kontrol filter selebar container, tabel/rack horizontal-scroll. Tidak ada content tertutup navigasi.
 - Tabel dan availability menjadi pusat visual. Form memakai section sederhana, bukan setiap field dalam kartu terpisah.
