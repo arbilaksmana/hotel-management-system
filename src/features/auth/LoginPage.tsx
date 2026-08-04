@@ -86,7 +86,7 @@ export function LoginPage() {
             ))}
             </div>
             <div className="p-4 sm:p-5">
-              <Button className="w-full" disabled={!firstUser} variant="outline" onClick={() => firstUser && go(firstUser.id)}>
+              <Button type="button" className="w-full" disabled={!firstUser} variant="outline" onClick={() => firstUser && go(firstUser.id)}>
                 <KeyRound /> Masuk cepat sebagai resepsionis
               </Button>
             </div>

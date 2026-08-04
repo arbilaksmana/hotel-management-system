@@ -8,6 +8,7 @@ import { useToast } from "@/components/feedback/Toast";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { MoneyText } from "@/components/shared/MoneyText";
+import { TONE_TEXT } from "@/components/shared/status-tokens";
 import { ConfirmDialog } from "@/components/feedback/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
@@ -15,6 +16,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { policy, guests } from "@/data/seed";
 import { dpThreshold } from "@/domain/rules/dp";
 import { formatDateTime } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { PaymentMethod } from "@/domain/types";
 
 function useCountdown(target?: string) {
@@ -112,9 +114,9 @@ export function ReservationDetailPage() {
               <div><p className="text-xs text-muted-foreground">Diskon</p><p className="tabular-nums">{Math.round(res.discountPercent * 100)}%</p></div>
               <div><p className="text-xs text-muted-foreground">Total</p><MoneyText value={res.totalAmount} className="text-base font-semibold" /></div>
               <div><p className="text-xs text-muted-foreground">DP minimum</p><MoneyText value={Math.min(threshold, res.totalAmount)} /></div>
-              <div><p className="text-xs text-muted-foreground">Terbayar</p><MoneyText value={res.paidAmount} className="text-emerald-700" /></div>
+              <div><p className="text-xs text-muted-foreground">Terbayar</p><MoneyText value={res.paidAmount} className={TONE_TEXT.positive} /></div>
               {res.holdExpiresAt && ["HOLD", "PENDING_PAYMENT", "PENDING_APPROVAL", "EXPIRED"].includes(res.status) ? (
-                <div><p className="text-xs text-muted-foreground">Sisa HOLD</p><p className="animate-pulse-soft font-medium text-amber-700 tabular-nums">{holdLeft}</p></div>
+                <div><p className="text-xs text-muted-foreground">Sisa HOLD</p><p className={cn("animate-pulse-soft font-medium tabular-nums", TONE_TEXT.warning)}>{holdLeft}</p></div>
               ) : null}
             </div>
           </div>
