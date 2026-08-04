@@ -49,8 +49,10 @@ export function AvailabilityPage() {
     for (const d of dates) map[d] = { sold: 0, total: visibleRooms.length };
     for (const room of visibleRooms) {
       for (const d of dates) {
+        const bucket = map[d];
+        if (!bucket) continue;
         const status = cellFor(room.id, d)?.status ?? "AVAILABLE";
-        if (status === "OCCUPIED" || status === "BOOKED" || status === "HELD") map[d].sold += 1;
+        if (status === "OCCUPIED" || status === "BOOKED" || status === "HELD") bucket.sold += 1;
       }
     }
     return map;
